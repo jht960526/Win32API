@@ -44,7 +44,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	int x = rand() % 700;
 	int y = rand() % 500;
 	int n = rand() % 9;
-	int count = rand() % 100;
+	int count = rand() % (100 - 20 + 1) + 20;
 
 	PAINTSTRUCT ps;
 	HDC hDC;
@@ -52,25 +52,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 	RECT rect;
 
-	switch (iMessage) {
-	case WM_CREATE:
+	switch (iMessage)
+	{
+		case WM_CREATE:
 		break;
-	case WM_PAINT:
+
+		case WM_PAINT:
 		hDC = BeginPaint(hWnd, &ps);
 		wsprintf(temp, L"%d", n);
 
 		SetTextColor(hDC, RGB(rand() % 256, rand() % 256, rand() % 256));
 		SetBkColor(hDC, RGB(rand() % 256, rand() % 256, rand() % 256));
 
-		//DrawText(hDC, temp, count, &rect, DT_SINGLELINE);
-		for (int i = 0; i < count; ++i) {
-			for (int q = 0; q < count; ++q) {
-				TextOut(hDC, x + (i * 8), y + (q * 13), temp, 1);
+		for (int i = 0; i < count; ++i) 
+		{
+			for (int j = 0; j < count; ++j) 
+			{
+				TextOut(hDC, x + (i * 8), y + (j * 13), temp, 1);
+				
 			}
 		}
 		EndPaint(hWnd, &ps);
 		break;
-	case WM_DESTROY:
+
+		case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
 	}
