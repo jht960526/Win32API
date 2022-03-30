@@ -39,6 +39,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 }
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
+	// Variable
 	srand(time(NULL));
 
 	int x = rand() % 700;
@@ -46,33 +47,68 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	int n = rand() % 9;
 	int count = rand() % 100;
 
+	int red = rand() % 255;
+	int blue = rand() % 255;
+	int green = rand() % 255;
+
+	// Struct
 	PAINTSTRUCT ps;
-	HDC hDC;
+	HDC Hdc;
 	TCHAR temp[100];
+	TCHAR RectStr[56] = _T("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzab");
+	COLORREF Rect1Color(RGB(red,blue,green));
 
+	// Rect
 	RECT rect;
+	RECT rect1{0, 0, 100, 75};
+	RECT rect2;
+	RECT rect3;
+	RECT rect4;
 
-	switch (iMessage) {
-	case WM_CREATE:
+
+	switch (iMessage)
+	{
+		case WM_CREATE:
 		break;
-	case WM_PAINT:
-		hDC = BeginPaint(hWnd, &ps);
+
+		case WM_PAINT:
+		Hdc = BeginPaint(hWnd, &ps);
 		wsprintf(temp, L"%d", n);
+		//wsprintf(RectStr,L"%c");
+
+		//rect1.left = 0;
+		//rect1.top = 0;
+		//rect1.right = 400;
+		//rect1.bottom = 300;
+
+		SetBkColor(Hdc, Rect1Color);
+
+		for(int i = 0; i < 14; ++i)
+		{
+			
+		}
+		DrawText(Hdc, RectStr,  _tcslen(RectStr), &rect1, DT_WORDBREAK);
 		
-		SetTextColor(hDC, RGB(rand() % 256, rand() % 256, rand() % 256));
-		SetBkColor(hDC, RGB(rand() % 256, rand() % 256, rand() % 256));
+		SetTextColor(Hdc, RGB(rand() % 256, rand() % 256, rand() % 256));
+		SetBkColor(Hdc, RGB(rand() % 256, rand() % 256, rand() % 256));
+
+
+		//for(int i = 0; i < )
 
 		//DrawText(hDC, temp, count, &rect, DT_SINGLELINE);
 		for (int i = 0; i < count; ++i) {
 			for (int q = 0; q < count; ++q) {
-				TextOut(hDC, x + (i*8), y + (q*13), temp, 1);
+				TextOut(Hdc, x + (i*8), y + (q*13), temp, 1);
 			}
 		}
+
 		EndPaint(hWnd, &ps);
 		break;
-	case WM_DESTROY:
-		PostQuitMessage(0);
+
+		case WM_DESTROY:
+			PostQuitMessage(0);
 		return 0;
-		}
+
+	}
 		return (DefWindowProc(hWnd, iMessage, wParam, lParam));
 }
