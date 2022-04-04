@@ -45,48 +45,77 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	// Variable
 	srand(time(NULL));
 
+	static SIZE size;
+	static TCHAR str[30][10];
+	static int colCount;
+	static int rowCount;
 	// Struct
 	PAINTSTRUCT ps;
 	HDC Hdc;
-	TCHAR temp[100];
-	TCHAR RectStr[56] = _T("abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzab");
-	TCHAR RectStr2[56] = _T("ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP");
-
-	// Rect
-	RECT rect1{ 0, 0, 100, 75 };
-	RECT rect2{ 0,75,100,150 };
-	RECT rect3{ 100,0,200,75 };
-	RECT rect4{ 100,75,200,150 };
-
+	
 
 	switch (iMessage)
 	{
 	case WM_CREATE:
+		CreateCaret(hWnd, NULL,5,15);
+		ShowCaret(hWnd);
+		colCount = 0;
+		rowCount = 0;
+		break;
+
+	case WM_CHAR:
+		// 문자 저장 후 인덱스 증가
+		str[colCount++][rowCount] = wParam;
+
+		// 문자열은 null로 끝
+		str[colCount][rowCount] = '\0';
+
+		if(colCount < 9)
+		{
+			colCount = 0;
+			rowCount++;
+		}
+
+		if(rowCount != 10)
+		{
+			if(colCount >= 0 && colCount <= 30)
+			{
+				str[rowCount][colCount] = '\0';
+				rowCount++;
+				colCount = 0;
+			}
+			else
+			{
+				str[rowCount][colCount++] = wParam;
+			}
+
+			if(colCount == 30)
+			{
+				str[rowCount][colCount] = '\0';
+				rowCount++;
+				colCount = 0;
+			}
+		}
+		
+		InvalidateRect(hWnd,NULL,true);
 		break;
 
 	case WM_PAINT:
 		Hdc = BeginPaint(hWnd, &ps);
 
-
-		SetTextColor(Hdc, RGB(rand() % 256, rand() % 256, rand() % 256));
-		SetBkColor(Hdc, RGB(rand() % 256, rand() % 256, rand() % 256));
-		DrawText(Hdc, RectStr, _tcslen(RectStr), &rect1, DT_WORDBREAK | DT_EDITCONTROL);
-		SetTextColor(Hdc, RGB(rand() % 256, rand() % 256, rand() % 256));
-		SetBkColor(Hdc, RGB(rand() % 256, rand() % 256, rand() % 256));
-		DrawText(Hdc, RectStr2, _tcslen(RectStr), &rect2, DT_WORDBREAK | DT_EDITCONTROL);
-		SetTextColor(Hdc, RGB(rand() % 256, rand() % 256, rand() % 256));
-		SetBkColor(Hdc, RGB(rand() % 256, rand() % 256, rand() % 256));
-		DrawText(Hdc, RectStr2, _tcslen(RectStr), &rect3, DT_WORDBREAK | DT_EDITCONTROL);
-		SetTextColor(Hdc, RGB(rand() % 256, rand() % 256, rand() % 256));
-		SetBkColor(Hdc, RGB(rand() % 256, rand() % 256, rand() % 256));
-		DrawText(Hdc, RectStr, _tcslen(RectStr), &rect4, DT_WORDBREAK | DT_EDITCONTROL);
-		SetTextColor(Hdc, RGB(rand() % 256, rand() % 256, rand() % 256));
-		SetBkColor(Hdc, RGB(rand() % 256, rand() % 256, rand() % 256));
+		for(int i = 0; i < rowCount; ++i)
+		{
+			TextOut(Hdc,0, i * 15, str[i], _tcslen(str[i]));
+		}
+		GetTextExtentPoint(Hdc, str[rowCount],_tcslen(str[rowCount]),&size);
+		SetCaretPos(size.cx,rowCount * 15);
 
 		EndPaint(hWnd, &ps);
 		break;
 
 	case WM_DESTROY:
+		HideCaret(hWnd);
+		DestroyCaret();
 		PostQuitMessage(0);
 		return 0;
 
