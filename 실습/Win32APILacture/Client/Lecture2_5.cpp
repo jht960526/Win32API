@@ -34,7 +34,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		0, 0, row, col, NULL, (HMENU)NULL, hInstance, NULL);
 	ShowWindow(hWnd, nCmdShow);
 	UpdateWindow(hWnd);
-	while (GetMessage(&Message, 0, 0, 0)) {
+	while (GetMessage(&Message, 0, 0, 0)) 
+	{
 		TranslateMessage(&Message);
 		DispatchMessage(&Message);
 	}
@@ -43,12 +44,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	// Variable
-	srand(time(NULL));
-
 	static SIZE size;
-	static TCHAR str[30][10];
-	static int colCount;
-	static int rowCount;
+	static TCHAR str[10][30];
+	static int count, yPos;
+	static int i;
+
 	// Struct
 	PAINTSTRUCT ps;
 	HDC Hdc;
@@ -59,65 +59,75 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 	case WM_CREATE:
 		CreateCaret(hWnd, NULL,5,15);
 		ShowCaret(hWnd);
-		colCount = 0;
-		rowCount = 0;
+		count = 0;
+		yPos = 0;
 		break;
 
 	case WM_CHAR:
-		// 문자 저장 후 인덱스 증가
-		str[colCount++][rowCount] = wParam;
 
-		// 문자열은 null로 끝
-		str[colCount][rowCount] = '\0';
-
-		if(colCount < 9)
+		if(yPos != 10)
 		{
-			colCount = 0;
-			rowCount++;
-		}
-
-		if(rowCount != 10)
-		{
-			if(colCount >= 0 && colCount <= 30)
+			if(wParam == VK_RETURN && count >= 0 && count <= 30)
 			{
-				str[rowCount][colCount] = '\0';
-				rowCount++;
-				colCount = 0;
+				str[yPos][count] = '\0';
+				yPos++;
+				count = 0;
 			}
+			else if(wParam == VK_BACK)
+			{
+				if(count > 0)
+				{
+					count--;
+					str[yPos][count] = NULL;
+				}
+				else if(count == 0)
+				{
+					yPos--;
+					count = _tcslen(str[yPos]);
+					count--;
+					str[yPos][count] = NULL;
+				}
+			}
+
 			else
 			{
-				str[rowCount][colCount++] = wParam;
+				str[yPos][count++] = wParam;
+				str[yPos][count] = '\0';
 			}
 
-			if(colCount == 30)
+			if (count == 30)
 			{
-				str[rowCount][colCount] = '\0';
-				rowCount++;
-				colCount = 0;
+				str[yPos][count] = '\0';
+				yPos++;
+				count = 0;
 			}
+			
 		}
 		
+
 		InvalidateRect(hWnd,NULL,true);
 		break;
 
 	case WM_PAINT:
 		Hdc = BeginPaint(hWnd, &ps);
 
-		for(int i = 0; i < rowCount; ++i)
+		for(i = 0; i <= yPos; ++i)
 		{
-			TextOut(Hdc,0, i * 15, str[i], _tcslen(str[i]));
+			TextOut(Hdc, 0, i * 15, str[i], _tcslen(str[i]));
 		}
-		GetTextExtentPoint(Hdc, str[rowCount],_tcslen(str[rowCount]),&size);
-		SetCaretPos(size.cx,rowCount * 15);
+		GetTextExtentPoint(Hdc, str[yPos], _tcslen(str[yPos]), &size);
+		SetCaretPos(size.cx, yPos * 15);
 
 		EndPaint(hWnd, &ps);
 		break;
 
 	case WM_DESTROY:
+		PostQuitMessage(0);
+		DestroyCaret();
 		HideCaret(hWnd);
 		DestroyCaret();
-		PostQuitMessage(0);
-		return 0;
+		
+		break;
 
 	}
 	return (DefWindowProc(hWnd, iMessage, wParam, lParam));
