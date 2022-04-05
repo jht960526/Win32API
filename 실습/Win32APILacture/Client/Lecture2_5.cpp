@@ -1,11 +1,9 @@
 #include <windows.h>
 #include <tchar.h>
-#include <stdlib.h>
-#include <time.h>
 
 HINSTANCE g_hInst;
 LPCTSTR lpszClass = L"Window Class Name";
-LPCTSTR lpszWindowName = L"Window Programming 2-2";
+LPCTSTR lpszWindowName = L"Window Programming 2-5";
 LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	LPSTR lpszCmdParam, int nCmdShow)
@@ -67,7 +65,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 
 		if(yPos != 10)
 		{
-			if(wParam == VK_RETURN && count >= 0 && count <= 30)
+			if(wParam == VK_RETURN && count >= 0 && count <= 29)
 			{
 				str[yPos][count] = '\0';
 				yPos++;
@@ -95,7 +93,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 				str[yPos][count] = '\0';
 			}
 
-			if (count == 30)
+			if (count == 29)
 			{
 				str[yPos][count] = '\0';
 				yPos++;
