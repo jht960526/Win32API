@@ -121,6 +121,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 		EndPaint(hWnd, &ps);
 		break;
 
+	
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		DestroyCaret();
