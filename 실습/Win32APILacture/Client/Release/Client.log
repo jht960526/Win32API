@@ -1,8 +1,7 @@
-﻿  Lecture2_10.cpp
-C:\Users\HONGTAK\Desktop\윈플재\Win32API\실습\Win32APILacture\Client\Lecture2_10.cpp(50,15): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+﻿  Lecture3_1.cpp
   코드를 생성하고 있습니다.
-  2 of 3 functions (66.7%) were compiled, the rest were copied from previous compilation.
+  1 of 3 functions (33.3%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+    1 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
-  Client.vcxproj -> C:\Users\HONGTAK\Desktop\윈플재\Win32API\실습\Win32APILacture\Release\Client.exe
+  Client.vcxproj -> C:\Users\qoqo1\Desktop\Win32\Win32API\실습\Win32APILacture\Release\Client.exe

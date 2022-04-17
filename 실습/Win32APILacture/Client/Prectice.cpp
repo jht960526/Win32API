@@ -22,7 +22,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 	WndClass.hInstance = hInstance;
 	WndClass.hIcon = LoadIcon(nullptr,IDI_APPLICATION);
 	WndClass.hCursor = LoadCursor(nullptr,IDC_ARROW);
-	WndClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
 	WndClass.lpszMenuName = nullptr;
 	WndClass.lpszClassName = lpszClass;
 	WndClass.hIconSm = LoadIcon(nullptr,IDI_APPLICATION);
@@ -44,23 +44,58 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	PAINTSTRUCT ps;
-	HDC hDC;
+	HDC Hdc;
+
+    HBRUSH hbrush, oldBrush;
+
+    static int Timer1Count = 0, Timer2Count = 0;
+    static int x = 0, y;
+    static RECT rectView;
 
 	// 메시지 처리하기
 	switch (iMessage)
 	{
-		case WM_CREATE:
-			break;
+	case WM_CREATE:
+        GetClientRect(hWnd, &rectView);
+        x = 20;
+        y = 20;
+        //SetTimer(hWnd, 1, 60, NULL);
+		//SetTimer(hWnd, 2, 100, NULL);
+		break;
 
-		case WM_PAINT:
-			hDC = BeginPaint(hWnd,&ps);
-		    EndPaint(hWnd, &ps);
-			break;
+	case WM_PAINT:
+        Hdc = BeginPaint(hWnd,&ps);
+		hbrush = CreateSolidBrush(RGB(255, 0, 0));
+		oldBrush = (HBRUSH)SelectObject(Hdc, hbrush);
+		Ellipse(Hdc, x - 20, y - 20, x + 20, y + 20);
+		SelectObject(Hdc, oldBrush);
+		EndPaint(hWnd, &ps);
+		break;
 
-		case WM_DESTROY:
-			PostQuitMessage(0);
-		    break;
+    case WM_KEYDOWN:
+        if (wParam == VK_RIGHT)
+        {
+            SetTimer(hWnd, 1, 70, NULL);
+        }
+        break;
+
+    case WM_TIMER:
+
+        x += 40;
+        if (x + 20 > rectView.right)
+        {
+            x = 0;
+        }
+        InvalidateRect(hWnd, NULL, TRUE);
+        break;
+
+
+	case WM_DESTROY:
+        KillTimer(hWnd, 1);
+        PostQuitMessage(0);
+		break;
 	}
+
 	// 이외의 메세지는 OS로
 	return DefWindowProc(hWnd,iMessage,wParam,lParam);
 }
