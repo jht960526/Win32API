@@ -95,6 +95,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_PAINT:
 		hDC = BeginPaint(hWnd, &ps);
+
+		// Ä­ ¸¸µé±â
 		for(int i = 0; i < 40; ++i)
 		{
 			for(int j = 0; j < 40; ++j)
@@ -102,6 +104,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				Rectangle(hDC, i * length.x, j * length.y, (i + 1) * length.x, (j + 1) * length.y);
 			}
 		}
+
+
 		for(int i = 0; i < 100; ++i)
 		{
 			hBrush = CreateSolidBrush(RGB(0, 0, 255));
@@ -330,6 +334,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			Movecheck = true;
 			break;
 		case '+':
+			break;
 		case '-':
 			break;
 		case 'q':
