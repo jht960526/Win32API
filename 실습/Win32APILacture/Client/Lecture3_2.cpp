@@ -83,6 +83,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
     static int ballx = 165, bally = 425;//볼의 좌표
     static double ball_x = -1, ball_y = -1;//볼의 방향 값
     static bool ballmove = false;//스페이스바 눌렸을때 스타트
+    static bool pause = false;
     static char jumsu[100];
     static int jumsucount;
 
@@ -184,35 +185,57 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
             if (barx >= 300)
                 barx = 295;
             InvalidateRect(hwnd, NULL, true);
-            return 0;
+            break;
 
-            //SPACE눌렀을때 공 스타트
-        case VK_SPACE:
-            ballmove = true;
-            return 0;
-
+            //s눌렀을때 공 스타트
         case 'S':
             ballmove = true;
-            return 0;
+            break;
 
         case '+':
-            ballx += 10;
+            ballspeedx += 1;
             PostQuitMessage(0);
-            //return 0;
+
             break;
 
         case '-':
-            ballx -= 10;
+            ballspeedx -= 1;
+            PostQuitMessage(0);
+            break;
+
+        case 'p':
+            if(pause)
+            {
+                pause = false;
+                SetTimer(hwnd, 1, 50, NULL);
+                
+            }
+            pause = true;
+            KillTimer(hwnd, 1);
+            
+            break;
+
+        case 'P':
+            if (pause)
+            {
+                pause = false;
+                SetTimer(hwnd, 1, 50, NULL);
+            }
+            pause = true;
+            KillTimer(hwnd, 1);
+            
             break;
 
             //ESC키 눌렀을때 빠져나감
         case 'Q':
             SendMessage(hwnd, WM_DESTROY, NULL, NULL);
-            return 0;
+            PostQuitMessage(0);
+            break;
 
         case 'q':
             SendMessage(hwnd, WM_DESTROY, NULL, NULL);
-            return 0;
+            PostQuitMessage(0);
+            break;
         }
         return 0;
 
