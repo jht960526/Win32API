@@ -105,6 +105,18 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 		InvalidateRgn(hWnd, NULL, TRUE);
 		break;
 
+	case WM_MOUSEMOVE:
+		mx = LOWORD(lParam);
+		my = HIWORD(lParam);
+
+		if (Selection)
+		{
+			x = mx;
+			y = my;
+			InvalidateRgn(hWnd, NULL, TRUE);
+		}
+		break;
+
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
