@@ -66,6 +66,9 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 	static int x, y;
 	static BOOL Selection;
 	int mx, my;
+	static int startX, startY, oldX, oldY;
+	static BOOL Drag;
+	int endX, endY;
 
 
 	// 메시지 처리하기
@@ -76,11 +79,19 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 		x = 50;
 		y = 50;
 		Selection = FALSE;
+		
+		// 실습3_7
+		startX = oldX = 50;
+		startY = oldY = 50;
+		Drag = FALSE;
 
 		break;
 
 	case WM_PAINT:
 		Hdc = BeginPaint(hWnd, &ps);
+		MoveToEx(Hdc, startX, startY,NULL);
+		LineTo(Hdc, oldX, oldY);
+
 		if(Selection)
 		{
 			Rectangle(Hdc, x - BSIZE, y - BSIZE, x + BSIZE, y + BSIZE);
@@ -93,6 +104,8 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 		mx = LOWORD(lParam);
 		my = HIWORD(lParam);
 
+		Drag = TRUE;
+
 		if(InCircle(x,y,mx,my))
 		{
 			Selection = TRUE;
@@ -101,6 +114,7 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 		break;
 
 	case WM_LBUTTONUP:
+		Drag = FALSE;
 		Selection = FALSE;
 		InvalidateRgn(hWnd, NULL, TRUE);
 		break;
@@ -109,6 +123,23 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 		mx = LOWORD(lParam);
 		my = HIWORD(lParam);
 
+		Hdc = GetDC(hWnd);
+
+		if(Drag)
+		{
+			SetROP2(Hdc, R2_XORPEN);
+			SelectObject(Hdc, (HPEN)GetStockObject(WHITE_PEN));
+			endX = LOWORD(lParam);
+			endY = HIWORD(lParam);
+
+			MoveToEx(Hdc, startX, startY, NULL);
+			LineTo(Hdc, oldX, oldY);
+			MoveToEx(Hdc, startX, startY,NULL);
+			LineTo(Hdc,endX,endY);
+			oldX = endX;
+			oldY = endY;
+		}
+		ReleaseDC(hWnd,Hdc);
 		if (Selection)
 		{
 			x = mx;
