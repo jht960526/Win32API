@@ -89,8 +89,7 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 
 	case WM_PAINT:
 		Hdc = BeginPaint(hWnd, &ps);
-		MoveToEx(Hdc, startX, startY,NULL);
-		LineTo(Hdc, oldX, oldY);
+		Ellipse(Hdc, startX, startY, oldX, oldY);
 
 		if(Selection)
 		{
@@ -120,8 +119,6 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 		break;
 
 	case WM_MOUSEMOVE:
-		mx = LOWORD(lParam);
-		my = HIWORD(lParam);
 
 		Hdc = GetDC(hWnd);
 
@@ -129,23 +126,17 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 		{
 			SetROP2(Hdc, R2_XORPEN);
 			SelectObject(Hdc, (HPEN)GetStockObject(WHITE_PEN));
+			SelectObject(Hdc, (HBRUSH)GetStockObject(BLACK_BRUSH));
 			endX = LOWORD(lParam);
 			endY = HIWORD(lParam);
 
-			MoveToEx(Hdc, startX, startY, NULL);
-			LineTo(Hdc, oldX, oldY);
-			MoveToEx(Hdc, startX, startY,NULL);
-			LineTo(Hdc,endX,endY);
+			Ellipse(Hdc, startX, startY, oldX, oldY);
+			Ellipse(Hdc, startX, startY, endX, endY);
+			
 			oldX = endX;
 			oldY = endY;
 		}
 		ReleaseDC(hWnd,Hdc);
-		if (Selection)
-		{
-			x = mx;
-			y = my;
-			InvalidateRgn(hWnd, NULL, TRUE);
-		}
 		break;
 
 	case WM_DESTROY:
