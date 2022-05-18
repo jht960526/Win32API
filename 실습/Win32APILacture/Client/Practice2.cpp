@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <math.h>
+#include "resource.h"
 
 #define BSIZE 40
 
@@ -61,7 +62,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	PAINTSTRUCT ps;
-	HDC Hdc;
+	HDC Hdc, hMemDC;
+
+	static HBITMAP hBitmap;
 
 	static int x, y;
 	static BOOL Selection;
@@ -79,7 +82,9 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 		x = 50;
 		y = 50;
 		Selection = FALSE;
-		
+
+		hBitmap = (HBITMAP)LoadImage(g_hinst,TEXT("파인애플.png"),IMAGE_BITMAP,0,0,LR_LOADFROMFILE|LR_CREATEDIBSECTION);
+
 		// 실습3_7
 		startX = oldX = 50;
 		startY = oldY = 50;
@@ -91,11 +96,22 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 		Hdc = BeginPaint(hWnd, &ps);
 		Ellipse(Hdc, startX, startY, oldX, oldY);
 
+		hBitmap = LoadBitmap(g_hinst,MAKEINTRESOURCE(IDB_BITMAP1));
+
+		hMemDC = CreateCompatibleDC(Hdc);
+		SelectObject(hMemDC, hBitmap);
+
+		//BitBlt(Hdc, 0,0,320,320,hMemDC,0,0,SRCCOPY);
+
+		StretchBlt(Hdc, 100, 0 , 160, 120, hMemDC, 0 , 0, 500, 500, SRCCOPY);
+
 		if(Selection)
 		{
 			Rectangle(Hdc, x - BSIZE, y - BSIZE, x + BSIZE, y + BSIZE);
 		}
 		Ellipse(Hdc, x - BSIZE, y - BSIZE, x + BSIZE, y + BSIZE);
+
+		DeleteDC(hMemDC);
 		EndPaint(hWnd, &ps);
 		break;
 
@@ -140,6 +156,7 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 		break;
 
 	case WM_DESTROY:
+		DeleteObject(hBitmap);
 		PostQuitMessage(0);
 		break;
 	}
