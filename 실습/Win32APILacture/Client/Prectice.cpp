@@ -1,16 +1,13 @@
 #include <windows.h>
 #include <tchar.h>
+#include "resource2.h"
 
 HINSTANCE g_hinst;
 LPCTSTR lpszClass = L"Window Class Name";
 LPCTSTR lpszWindowName = L"Window Program 1";
 
 LRESULT CALLBACK WndProc (HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
-
-struct BALL
-{
-	int x = 0,y = 0;
-};
+BOOL CALLBACK Dlalog_Proc(HWND,UINT,WPARAM,LPARAM);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
@@ -51,63 +48,28 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 	PAINTSTRUCT ps;
 	HDC Hdc;
 
-    HBRUSH hbrush, oldBrush;
-
-    static int Timer1Count = 0, Timer2Count = 0;
-    static int x = 0, y;
-    static RECT rectView;
-    static RECT Graph;
-    static POINT Length{};
-    static BALL HeadBall[100] {};
-
 	// 메시지 처리하기
 	switch (iMessage)
 	{
 	case WM_CREATE:
-        GetClientRect(hWnd, &rectView);
-        GetClientRect(hWnd, &Graph);
-        x = 0;
-        y = 0;
-
-        Length.x = Graph.right/40;
-        Length.y = Graph.bottom/40;
-
-        //SetTimer(hWnd, 1, 60, NULL);
-		//SetTimer(hWnd, 2, 100, NULL);
-        SetTimer(hWnd,1,100,NULL);
 
 		break;
 
 	case WM_PAINT:
         Hdc = BeginPaint(hWnd,&ps);
 
-        // 칸 만들기
-        for(int i = 0; i < 40; ++i)
-        {
-	        for(int j = 0; j < 40; ++j)
-	        {
-		        Rectangle(Hdc,i * Length.x, j * Length.y, (i + 1) * Length.x, (j + 1) * Length.y);
-	        }
-        }
-
-        for(int i = 0; i < 100; ++i)
-        {
-	        hbrush = CreateSolidBrush(RGB(0, 255, 0));
-        	oldBrush = (HBRUSH)SelectObject(Hdc, hbrush);
-        	Ellipse(Hdc, HeadBall[i].x * Length.x, HeadBall[i].y * Length.y,(HeadBall[i].x * Length.x) + Length.x, (HeadBall[i].y * Length.y) + Length.y);
-        	SelectObject(Hdc, oldBrush);
-        	DeleteObject(hbrush);
-        }
-
-        
-
         EndPaint(hWnd, &ps);
+		break;
+
+	case WM_LBUTTONDOWN:
+		DialogBox(g_hinst, MAKEINTRESOURCE(IDD_DIALOG1),hWnd,Dlalog_Proc);
 		break;
 
     case WM_KEYDOWN:
         
         switch (wParam)
         {
+
         case 's':
             SetTimer(hWnd, 1, 100, NULL);
             break;
@@ -129,16 +91,7 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 
     case WM_TIMER:
 
-        for(int i = 0; i < 100; ++i)
-        {
-	        HeadBall[i].x += HeadBall[i].x;
-        }
-
-        x += 40;
-        if (x + 20 > rectView.right)
-        {
-            x = 0;
-        }
+       
         InvalidateRect(hWnd, NULL, TRUE);
         break;
 
@@ -151,4 +104,39 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 
 	// 이외의 메세지는 OS로
 	return DefWindowProc(hWnd,iMessage,wParam,lParam);
+}
+
+BOOL __stdcall Dlalog_Proc(HWND hDIg, UINT iMsg, WPARAM wParam, LPARAM lParam)
+{
+	HDC hdc;
+
+	switch (iMsg)
+	{
+	case WM_INITDIALOG:
+		break;
+
+	case WM_COMMAND:
+		switch(LOWORD(wParam))
+		{
+		case IDC_BUTTON1:
+			hdc = GetDC(hDIg);
+			TextOut(hdc,0,0,L"Hello World", 11);
+			ReleaseDC(hDIg,hdc);
+			break;
+
+		case IDC_BUTTON2:
+			MessageBox(hDIg, L"Stop Button", L"test", MB_OK);
+			break;
+
+		case IDCANCEL:
+			EndDialog(hDIg,0);
+			break;
+		}
+		break;
+
+	case WM_CLOSE:
+		EndDialog(hDIg, 0);
+		break;
+	}
+	return 0;
 }
