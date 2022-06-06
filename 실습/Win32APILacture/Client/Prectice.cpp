@@ -46,18 +46,31 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam)
 {
 	PAINTSTRUCT ps;
-	HDC Hdc;
+	HDC Hdc,memdc, mem1dc, mem2dc;
+	static HBITMAP hBit1, hBit2;
+	HBITMAP oldBit1, oldBit2;
+	static HBITMAP hBitmap,oldBit;
+	TCHAR word[] = L"더블 버퍼링 실습";
+	static int yPos;
 
 	// 메시지 처리하기
 	switch (iMessage)
 	{
 	case WM_CREATE:
+		hBitmap = (HBITMAP)LoadBitmap(g_hinst,MAKEINTRESOURCE(IDB_BITMAP1));
+
+		yPos = -30;
 
 		break;
 
 	case WM_PAINT:
         Hdc = BeginPaint(hWnd,&ps);
 
+		memdc = CreateCompatibleDC(Hdc);
+		SelectObject(memdc,hBitmap);
+		StretchBlt(Hdc,100,0,160,120,memdc,0,0,320,240,SRCCOPY);
+		
+		DeleteDC(memdc);
         EndPaint(hWnd, &ps);
 		break;
 
@@ -97,6 +110,7 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 
 
 	case WM_DESTROY:
+		DeleteObject(hBitmap);
         KillTimer(hWnd, 1);
         PostQuitMessage(0);
 		break;
