@@ -4,8 +4,8 @@ C:\Users\HONGTAK\Desktop\윈플재\Win32API\실습\Win32APILacture\Client\Precti
 C:\Users\HONGTAK\Desktop\윈플재\Win32API\실습\Win32APILacture\Client\Prectice.cpp(51,19): warning C4101: 'oldBit2' :참조되지 않은 지역 변수입니다.
 C:\Users\HONGTAK\Desktop\윈플재\Win32API\실습\Win32APILacture\Client\Prectice.cpp(49,25): warning C4101: 'mem2dc' :참조되지 않은 지역 변수입니다.
   코드를 생성하고 있습니다.
-  1 of 3 functions (33.3%) were compiled, the rest were copied from previous compilation.
+  2 of 3 functions (66.7%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
   Client.vcxproj -> C:\Users\HONGTAK\Desktop\윈플재\Win32API\실습\Win32APILacture\Release\Client.exe

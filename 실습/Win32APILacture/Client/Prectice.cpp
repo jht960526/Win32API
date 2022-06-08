@@ -52,12 +52,15 @@ LRESULT __stdcall WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam
 	static HBITMAP hBitmap,oldBit;
 	TCHAR word[] = L"더블 버퍼링 실습";
 	static int yPos;
+	RECT RectView;
 
 	// 메시지 처리하기
 	switch (iMessage)
 	{
 	case WM_CREATE:
 		hBitmap = (HBITMAP)LoadBitmap(g_hinst,MAKEINTRESOURCE(IDB_BITMAP1));
+
+		GetClientRect(hWnd,&RectView);
 
 		yPos = -30;
 
